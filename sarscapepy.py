@@ -5,23 +5,56 @@ Created on Tue Feb 11 16:16:02 2020
 
 @author: maref
 """
-import gdal
+
+
+
+"""
+shape2grid description:
+    
+"""
+from scipy.interpolate import griddata
 import numpy as np
-import geopandas
-filename= input('Enter Shape file name please : ')
-df = geopandas.read_file(filename)
 
+def shape2grid(dataFrame,value,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear',fillValue=np.nan):
+    "Check for None inputs and Values"
+    if Xmin==None:
+        Xmin=min(dataFrame.X)
+    if Xmax==None:
+        Xmax=max(dataFrame.X)  
+    if Ymin==None:
+        Ymin=min(dataFrame.Y)
+    if Ymax==None:
+        Ymax=max(dataFrame.Y)          
+    
+    "Interpolate"
+    x=np.arange(Xmin, Xmax, gridSize)
+    y=np.arange(Ymin, Ymax, gridSize)
+    
+    grid = np.meshgrid(x,y)
+    points=np.vstack((np.array(dataFrame.X),np.array(dataFrame.Y))).T
+    
+    grid_z0 = griddata(points, dataFrame[value], tuple(grid), method)
+    
+    "remove to far values"
+    
+    # Construct kd-tree, functionality copied from scipy.interpolate
 
-def shape2grid(df,value,gridSize,Xmin,Xmanx,Ymin,Ymax,methode,fillValue):
-    grid_x, grid_y = np.mgrid[Xmin:Xmanx:gridSize, Ymin:Ymax:gridSize]
-    grid_z0 = griddata(df.X,df.Y, df[value], (grid_x, grid_y), method)
+    from scipy.interpolate.interpnd import _ndim_coords_from_arrays
+    from scipy.spatial import cKDTree
+
+    tree = cKDTree(points)
+    xi = _ndim_coords_from_arrays(tuple(grid), ndim=points.shape[1])
+    dists, indexes = tree.query(xi)
+
+    #  mask missing values with NaNs
+
+    grid_z0[dists > gridSize] = np.nan
     
     
-dg=shape2grid(df,,gridSize,Xmin,Xmanx,Ymin,Ymax,methode,fillValue)
+    return grid_z0
+    
+    
+    
         
     
-ds = gdal.Grid(test, arry, format='GTiff',
-               outputBounds=[0.0, 0.0, 100.0, 100.0],
-               width=10, height=10, outputType=gdal.GDT_Float32,
-               algorithm='invdist:power=2.0:smoothing=1.0',
-               zfield='height')    
+  
