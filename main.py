@@ -21,7 +21,7 @@ df = geopandas.read_file(filename)
 
 #interpolate to grid
 
-grid=shape2grid(dataFrame=df, value='Velocity', gridSize=1/3600, Xmin=None, Xmax=None, Ymin=None, Ymax=None, method='linear', fillValue=0)
+grid=shape2grid(dataFrame=df, values=None, gridSize=1/3600, Xmin=None, Xmax=None, Ymin=None, Ymax=None, method='linear', fillValue=0)
 
 
 # display
@@ -32,7 +32,7 @@ grid=shape2grid(dataFrame=df, value='Velocity', gridSize=1/3600, Xmin=None, Xmax
 
 
 # Show
-plt.figimage(grid)
+plt.figimage(grid.get('Velocity'))
 plt.show()
 
 

@@ -15,8 +15,9 @@ shape2grid description:
 from scipy.interpolate import griddata
 import numpy as np
 
-def shape2grid(dataFrame,value,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear',fillValue=np.nan):
-    "Check for None inputs and Values"
+def shape2grid(dataFrame,values,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear',fillValue=np.nan):
+    #"Check for None inputs and Values"
+    #PS: If max and min are choosen like this they might not fit together
     if Xmin==None:
         Xmin=min(dataFrame.X)
     if Xmax==None:
@@ -26,16 +27,26 @@ def shape2grid(dataFrame,value,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,
     if Ymax==None:
         Ymax=max(dataFrame.Y)          
     
-    "Interpolate"
+    #"Check if no value, if yes: unpack all"
+    if values==None:
+        none,values_temp=dataFrame.axes
+        values=values_temp.values.tolist()
+    elif type(values)==str:
+        values=[values]
+        
+            
+    
+    # create grid for Interpolation
     x=np.arange(Xmin, Xmax, gridSize)
     y=np.arange(Ymin, Ymax, gridSize)
     
-    grid = np.meshgrid(x,y)
+    grid = tuple(np.meshgrid(x,y))
+    # points as array
     points=np.vstack((np.array(dataFrame.X),np.array(dataFrame.Y))).T
     
-    grid_z0 = griddata(points, dataFrame[value], tuple(grid), method)
     
-    "remove to far values"
+    
+    #Create mask
     
     # Construct kd-tree, functionality copied from scipy.interpolate
 
@@ -45,13 +56,23 @@ def shape2grid(dataFrame,value,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,
     tree = cKDTree(points)
     xi = _ndim_coords_from_arrays(tuple(grid), ndim=points.shape[1])
     dists, indexes = tree.query(xi)
-
-    #  mask missing values with NaNs
-
-    grid_z0[dists > gridSize] = np.nan
+    mask=dists > gridSize
     
+    #  save mask to output
+    grid_out={'Mask':mask}
+    for value in values:
+        if type(dataFrame[value][1])!=np.float64 :
+            continue
+        
+        print("Interpolatin: " + value)
+        grid_z0 = griddata(points, dataFrame[value], tuple(grid), method)
+        #  mask missing values with NaNs
+        grid_z0[mask] = np.nan
+        
+        #"assign to final output"
+        grid_out.update( {value: grid_z0} )
     
-    return grid_z0
+    return grid_out
     
     
     
