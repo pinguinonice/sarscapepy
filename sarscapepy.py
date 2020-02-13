@@ -10,12 +10,22 @@ Created on Tue Feb 11 16:16:02 2020
 
 """
 shape2grid description:
-    
+Parameters:    
+    dataFrame: geopandas dataframe
+    gridSize : float grid size of the output grid
+    values   : list of strings with the desired output fields 
+    Xmin,Xmax: X bounderies
+    Ymin,Ymax: Y bounderies
+    method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
+Output:
+    dictionary with NumPy array of the interpolated values + mask    
 """
 from scipy.interpolate import griddata
 import numpy as np
 
-def shape2grid(dataFrame,values,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear',fillValue=np.nan):
+def shape2grid(dataFrame,gridSize,values=None,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear'):
+    print("executing shape2grid:")
+
     #"Check for None inputs and Values"
     #PS: If max and min are choosen like this they might not fit together
     if Xmin==None:
@@ -64,7 +74,7 @@ def shape2grid(dataFrame,values,gridSize,Xmin=None,Xmax=None,Ymin=None,Ymax=None
         if type(dataFrame[value][1])!=np.float64 :
             continue
         
-        print("Interpolatin: " + value)
+        print("Interpolate: " + value)
         grid_z0 = griddata(points, dataFrame[value], tuple(grid), method)
         #  mask missing values with NaNs
         grid_z0[mask] = np.nan
