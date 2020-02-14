@@ -8,9 +8,8 @@ Created on Tue Feb 11 16:16:02 2020
 
 import geopandas
 
-import matplotlib.pyplot as plt
 
-from sarscapepy import shape2grid
+from sarscapepy import shape2grid, dispGrid
 
 
 
@@ -25,30 +24,11 @@ grid=shape2grid(dataFrame=df, values='Velocity', gridSize=1/3600, LonMin=14.00,L
 
 
 # display on basemap
-import numpy as np
-import georaster
 
-# load basemap
+
 base_path="basemap/Idrija_14.tif"
-base = georaster.MultiBandRaster(base_path)
 
-# load grid as georeferenced
-velocity = georaster.SingleBandRaster.from_array(grid.get('Velocity'), grid.get('info').get('geoTransform'), grid.get('info').get('projection'))
-
-
-
-# plot
-fig, ax = plt.subplots()
-
-plt.imshow(np.array(base.r[:,:,:], dtype='uint8')  , alpha=1,extent=base.extent)
-plt.xlabel('Lon')
-plt.ylabel('Lat')
-plot_grid=plt.imshow(np.array(velocity.r)  , alpha=0.6, cmap='RdBu',extent=velocity.extent)
-plt.clim(-20,20) 
-cbar = fig.colorbar(plot_grid)
-
-plt.ylim(plt.ylim()[::-1])
-plt.show()
+dispGrid(grid,layer_name='Velocity',base_path=base_path)
 
 
 

@@ -20,10 +20,11 @@ Parameters:
 Output:
     dictionary with NumPy array of the interpolated values + mask    
 """
-from scipy.interpolate import griddata
-import numpy as np
+
 
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
+    from scipy.interpolate import griddata
+    import numpy as np
     print("executing shape2grid:")
 
     #"Check for None inputs and Values"
@@ -99,8 +100,53 @@ def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=Non
     
     return grid_out
     
+
+
+"""
+dispGrid description:
+Parameters:    
+    grid: output dict from shape2grid
+    layer_name : string with Layer name in grid
+    base_path   : path to basemap (geotif lat,lon, i.e. SAS output) 
+  
+"""
+    
+# display on basemap
+    
+def dispGrid(grid,layer_name=None,base_path=None):
+    
+
+    import numpy as np
+    import georaster
+    import matplotlib.pyplot as plt
+
+
+    
+    # load grid as georeferenced
+    layer = georaster.SingleBandRaster.from_array(grid.get(layer_name), grid.get('info').get('geoTransform'), grid.get('info').get('projection'))
     
     
-        
+    
+    # plot
+    fig, ax = plt.subplots()
+    
+    if type(base_path) == str:
+        # load basemap
+        base = georaster.MultiBandRaster(base_path)
+        plt.imshow(np.array(base.r[:,:,:], dtype='uint8')  , alpha=1,extent=base.extent)
+
+    plot_grid=plt.imshow(np.array(layer.r)  , alpha=0.6, cmap='RdBu',extent=layer.extent)
+    
+    plt.clim(-20,20) 
+    cbar = fig.colorbar(plot_grid)
+    
+    
+    plt.xlabel('Lon')
+    plt.ylabel('Lat')
+    
+    # flip Lat axis
+    plt.ylim(plt.ylim()[::-1])
+    plt.show()
+           
     
   
