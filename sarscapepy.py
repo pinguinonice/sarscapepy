@@ -122,7 +122,7 @@ def dispGrid(grid,layer_name=None,base_path=None):
 
 
     
-    # load grid as georeferenced
+    # load grid as georeferenced georaster
     layer = georaster.SingleBandRaster.from_array(grid.get(layer_name), grid.get('info').get('geoTransform'), grid.get('info').get('projection'))
     
     
@@ -130,17 +130,19 @@ def dispGrid(grid,layer_name=None,base_path=None):
     # plot
     fig, ax = plt.subplots()
     
+    # if basemap path is set
     if type(base_path) == str:
         # load basemap
         base = georaster.MultiBandRaster(base_path)
         plt.imshow(np.array(base.r[:,:,:], dtype='uint8')  , alpha=1,extent=base.extent)
-
+    
     plot_grid=plt.imshow(np.array(layer.r)  , alpha=0.6, cmap='RdBu',extent=layer.extent)
     
+    # set coloraxis
     plt.clim(-20,20) 
     cbar = fig.colorbar(plot_grid)
     
-    
+    # label axis
     plt.xlabel('Lon')
     plt.ylabel('Lat')
     
