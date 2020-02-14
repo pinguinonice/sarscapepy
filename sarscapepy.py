@@ -14,8 +14,8 @@ Parameters:
     dataFrame: geopandas dataframe
     gridSize : float grid size of the output grid
     values   : list of strings with the desired output fields 
-    Xmin,Xmax: X bounderies
-    Ymin,Ymax: Y bounderies
+    LonMin,LonMax: X bounderies
+    LatMin,LatMax: Y bounderies
     method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
 Output:
     dictionary with NumPy array of the interpolated values + mask    
@@ -23,40 +23,55 @@ Output:
 from scipy.interpolate import griddata
 import numpy as np
 
-def shape2grid(dataFrame,gridSize,values=None,Xmin=None,Xmax=None,Ymin=None,Ymax=None,method='linear'):
+def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     print("executing shape2grid:")
 
     #"Check for None inputs and Values"
     #PS: If max and min are choosen like this they might not fit together
-    if Xmin==None:
-        Xmin=min(dataFrame.X)
-    if Xmax==None:
-        Xmax=max(dataFrame.X)  
-    if Ymin==None:
-        Ymin=min(dataFrame.Y)
-    if Ymax==None:
-        Ymax=max(dataFrame.Y)          
+    if LonMin==None:
+        LonMin=min(dataFrame.Lon)
+    if LonMax==None:
+        LonMax=max(dataFrame.Lon)  
+    if LatMin==None:
+        LatMin=min(dataFrame.Lat)
+    if LatMax==None:
+        LatMax=max(dataFrame.Lat)          
     
     #"Check if no value, if yes: unpack all"
     if values==None:
-        none,values_temp=dataFrame.axes
+        none,values_temp=dataFrame.axes # all list columns 
         values=values_temp.values.tolist()
     elif type(values)==str:
         values=[values]
-        
-            
+    
+    # generate info
+        # geoTransform tuple
+    '''
+    tlx: The X coordinate of the upper-left corner of the raster
+    W-E size: The size of each cell from west to east        
+    tly: The Y coordinate of the upper-left corner of the raster        
+    N-S size: The size of each cell from north to south. Generally speaking this should be negative.
+    '''
+    print("Generating info...")
+
+    info=({'geoTransform':(LonMin, gridSize,0,LatMin,0, gridSize)})
+    info.update({'init':dataFrame.crs})
+    info.update({'projection':'+init='+dataFrame.crs.get('init')})
+    
+    
+    grid_out=({'info':info})         
     
     # create grid for Interpolation
-    x=np.arange(Xmin, Xmax, gridSize)
-    y=np.arange(Ymin, Ymax, gridSize)
+    x=np.arange(LonMin, LonMax, gridSize)
+    y=np.arange(LatMin, LatMax, gridSize)
     
     grid = tuple(np.meshgrid(x,y))
     # points as array
-    points=np.vstack((np.array(dataFrame.X),np.array(dataFrame.Y))).T
+    points=np.vstack((np.array(dataFrame.Lon),np.array(dataFrame.Lat))).T
     
     
     
-    #Create mask
+    #Create mask to mask out to far interpolation results
     
     # Construct kd-tree, functionality copied from scipy.interpolate
 
@@ -69,7 +84,7 @@ def shape2grid(dataFrame,gridSize,values=None,Xmin=None,Xmax=None,Ymin=None,Ymax
     mask=dists > gridSize
     
     #  save mask to output
-    grid_out={'Mask':mask}
+    grid_out.update({'mask':mask} )
     for value in values:
         if type(dataFrame[value][1])!=np.float64 :
             continue
