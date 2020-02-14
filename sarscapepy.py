@@ -26,6 +26,16 @@ def read_file(filename):
     df.drop(df.columns[len(df.columns)-1], axis=1, inplace=True)
     return df
 
+def headerinfo(dataFrame):
+   import pandas as pd
+   hdinfo=dataFrame.columns.tolist()
+   tinfo=hdinfo[18:]
+   tinfo = [tinfo.replace('D_','') for tinfo in tinfo ]
+   tstring=pd.DataFrame(tinfo)
+   ts=pd.to_datetime(tstring[0], format='%Y%m%d').dt.strftime("%Y-%m-%d")
+   ts=pd.to_datetime(ts)
+   return hdinfo,tinfo,ts
+
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     from scipy.interpolate import griddata
     import numpy as np
