@@ -20,7 +20,11 @@ Parameters:
 Output:
     dictionary with NumPy array of the interpolated values + mask    
 """
-
+def read_file(filename):
+    import geopandas
+    df = geopandas.read_file(filename)
+    df.drop(df.columns[len(df.columns)-1], axis=1, inplace=True)
+    return df
 
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     from scipy.interpolate import griddata
