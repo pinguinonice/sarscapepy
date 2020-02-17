@@ -35,6 +35,12 @@ def headerinfo(dataFrame):
    ts=pd.to_datetime(tstring[0], format='%Y%m%d').dt.strftime("%Y-%m-%d")
    ts=pd.to_datetime(ts)
    return hdinfo,tinfo,ts
+
+def v2point(data,variable):
+    import pandas as pd
+    df2=Dataframe[['Lon','Lat',variable]]
+    return df2   
+
 def point2grd(data,output_filename):
     import gdal
     import pandas as pd
