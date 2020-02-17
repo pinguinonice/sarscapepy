@@ -24,8 +24,11 @@ df=read_file(filename)
 hdinfo,tinfo,ts=headerinfo(dataFrame=df)
 #interpolate to grid
 grid=shape2grid(dataFrame=df, values='Velocity', gridSize=1/3600, LonMin=14.00,LonMax=14.06,LatMin=45.98,LatMax=46.04, method='linear')
-#save GeoTiff and interpolation!
+#extract a variable with lat and Lon!
 ds=v2point(df,'Velocity')
+#save GeoTiff and interpolation!
+point2grd(ds,"tr")
+
 
 # display on basemap
 
