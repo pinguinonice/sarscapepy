@@ -9,7 +9,7 @@ Created on Tue Feb 11 16:16:02 2020
 import geopandas
 
 
-from sarscapepy import shape2grid, dispGrid,read_file,headerinfo
+from sarscapepy import shape2grid, dispGrid,read_file,headerinfo,v2point
 
 
 
@@ -24,7 +24,8 @@ df=read_file(filename)
 hdinfo,tinfo,ts=headerinfo(dataFrame=df)
 #interpolate to grid
 grid=shape2grid(dataFrame=df, values='Velocity', gridSize=1/3600, LonMin=14.00,LonMax=14.06,LatMin=45.98,LatMax=46.04, method='linear')
-
+#save GeoTiff and interpolation!
+ds=v2point(df,'Velocity')
 
 # display on basemap
 
