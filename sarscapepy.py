@@ -35,6 +35,27 @@ def headerinfo(dataFrame):
    ts=pd.to_datetime(tstring[0], format='%Y%m%d').dt.strftime("%Y-%m-%d")
    ts=pd.to_datetime(ts)
    return hdinfo,tinfo,ts
+def point2grd(data,output_filename):
+    import gdal
+    import pandas as pd
+    import gdal
+pd.data.to_csv(output_filename+'.csv',index=False)
+str2=output_filename
+str1= '''<OGRVRTDataSource>
+      <OGRVRTLayer name= '''
+str3='''  >
+        <SrcDataSource> '''
+str4= ''' </SrcDataSource>
+        <GeometryType>wkbPoint</GeometryType>
+        <GeometryField encoding="PointFromColumns" x="Lon" y="Lat" z='''
+str5= ''' />
+       </OGRVRTLayer>
+</OGRVRTDataSource> '''
+outstring =str1+'"'+str2+'"'+str3+str2+".csv"+str4+'"'+str(ds.columns[2])+'"'+str5
+text_file = open(output_filename+'.vrt', "wt")
+n = text_file.write(outstring)
+text_file.close()
+output=gdal.Grid(output_filename+'.tif',output_filename+'.vrt')
 
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     from scipy.interpolate import griddata
