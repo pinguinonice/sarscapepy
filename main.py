@@ -6,11 +6,9 @@ Created on Tue Feb 11 16:16:02 2020
 @author: pippo
 """
 
-import geopandas
 
 
-
-from sarscapepy import shape2grid, dispGrid,read_file,headerinfo,v2point
+from sarscapepy import shape2grid, dispGrid,read_file,headerinfo,v2point,point2grd
 
 # read file
 #filename= input('Enter Shape file name please : ')

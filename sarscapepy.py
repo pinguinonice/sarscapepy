@@ -8,18 +8,7 @@ Created on Tue Feb 11 16:16:02 2020
 
 
 
-"""
-shape2grid description:
-Parameters:    
-    dataFrame: geopandas dataframe
-    gridSize : float grid size of the output grid
-    values   : list of strings with the desired output fields 
-    LonMin,LonMax: X bounderies
-    LatMin,LatMax: Y bounderies
-    method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
-Output:
-    dictionary with NumPy array of the interpolated values + mask    
-"""
+
 def read_file(filename):
     import geopandas
     df = geopandas.read_file(filename)
@@ -45,23 +34,40 @@ def point2grd(data,output_filename):
     import gdal
     import pandas as pd
     import gdal
-pd.data.to_csv(output_filename+'.csv',index=False)
-str2=output_filename
-str1= '''<OGRVRTDataSource>
-      <OGRVRTLayer name= '''
-str3='''  >
-        <SrcDataSource> '''
-str4= ''' </SrcDataSource>
-        <GeometryType>wkbPoint</GeometryType>
-        <GeometryField encoding="PointFromColumns" x="Lon" y="Lat" z='''
-str5= ''' />
-       </OGRVRTLayer>
-</OGRVRTDataSource> '''
-outstring =str1+'"'+str2+'"'+str3+str2+".csv"+str4+'"'+str(ds.columns[2])+'"'+str5
-text_file = open(output_filename+'.vrt', "wt")
-n = text_file.write(outstring)
-text_file.close()
-output=gdal.Grid(output_filename+'.tif',output_filename+'.vrt')
+    pd.data.to_csv(output_filename+'.csv',index=False)
+    str2=output_filename
+    str1= '''<OGRVRTDataSource>
+          <OGRVRTLayer name= '''
+    str3='''  >
+            <SrcDataSource> '''
+    str4= ''' </SrcDataSource>
+            <GeometryType>wkbPoint</GeometryType>
+            <GeometryField encoding="PointFromColumns" x="Lon" y="Lat" z='''
+    str5= ''' />
+           </OGRVRTLayer>
+    </OGRVRTDataSource> '''
+    outstring =str1+'"'+str2+'"'+str3+str2+".csv"+str4+'"'+str(ds.columns[2])+'"'+str5
+    text_file = open(output_filename+'.vrt', "wt")
+    n = text_file.write(outstring)
+    text_file.close()
+    output=gdal.Grid(output_filename+'.tif',output_filename+'.vrt')
+
+
+
+
+"""
+shape2grid description:
+Parameters:    
+    dataFrame: geopandas dataframe
+    gridSize : float grid size of the output grid
+    values   : list of strings with the desired output fields 
+    LonMin,LonMax: X bounderies
+    LatMin,LatMax: Y bounderies
+    method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
+Output:
+    dictionary with NumPy array of the interpolated values + mask    
+"""
+
 
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     from scipy.interpolate import griddata
