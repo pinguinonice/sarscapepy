@@ -286,16 +286,69 @@ def decomposeTwoOrbits(grid_asc, grid_dsc, layer_name):
     
     return grid_asc, grid_dsc
 
+"""
+getAcquisitionTime description:
+   
+Parameters: 
+    :
+    grid: orbit (output dict from shape2grid)
+    
+
+    output
+    grid: with dict field AcquisitionTime
+    AcquisitionTime:  DateStrigns, JulianDays, DatesDateTimes
+    
+    edit: 27.2.2020 Philipp Schneider ifp
+"""    
+  
+def getAcquisitionTime(grid):
+    from datetime import datetime
+    from  jdcal import gcal2jd
+    # get all D_*values
+    DateStrigns=[key for key in grid.keys() if 'D_' in key]
+    
+    # convert all D_*values to datetime
+    DatesDateTimes=[datetime.strptime(DateStr[2:],'%Y%m%d') for DateStr in DateStrigns]
+    
+    # convert all datetime to julian day 
+    JulianDays=[gcal2jd(DatesDateTime.year,DatesDateTime.month,DatesDateTime.day)[1] for DatesDateTime in DatesDateTimes]
+    
+    AcquisitionTime={'DateStrigns': DateStrigns,
+                     'JulianDays' : JulianDays,
+                     'DatesDateTimes': DatesDateTimes
+                     }
+    grid.update({'AcquisitionTime': AcquisitionTime})
+    
+    return grid
+    
+"""
+plotAcquisitionTimeline description:
+   
+Parameters: 
+ input:
+    grid: orbit (output dict from shape2grid)
+            WITH AcquisitionTime from  getAcquisitionTime
+    ylabel: i.e name of the orbit
+    title : i.e. place
+    
+    
+    edit: 27.2.2020 Philipp Schneider, ifp
+"""     
 
 
-
-
-
-
-
-
-
-
+def plotAcquisitionTimeline(grid,title='AcquisitionTime',ylabel='Data'):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    
+    grid.get('AcquisitionTime').get('JulianDays')
+    dates=grid.get('AcquisitionTime').get('DatesDateTimes');
+    
+    plt.plot_date(dates,np.full_like(grid.get('AcquisitionTime').get('JulianDays'),1),'ro')
+    plt.yticks([], [])
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.grid(True)
+    plt.show()
 
 
 
