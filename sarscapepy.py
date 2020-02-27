@@ -199,6 +199,7 @@ def dispGrid(grid,layer_name=None,base_path=None):
     # flip Lat axis
     plt.ylim(plt.ylim()[::-1])
     plt.show()
+    return fig, ax
            
 """
 decomposeTwoOrbits description:
@@ -353,9 +354,58 @@ def plotAcquisitionTimeline(grid,title='AcquisitionTime',ylabel='Data'):
     plt.grid(True)
     plt.show()
 
+"""
+plotAcquisitionTimeline description:
+   
+Parameters: 
+ input:
+    grid: orbit (output dict from shape2grid)
+            WITH AcquisitionTime from  getAcquisitionTime
+    ylabel: i.e name of the orbit
+    title : i.e. place
+    
+    
+    edit: 27.2.2020 Philipp Schneider, ifp
+""" 
+def showDeformationHistory(grid):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from matplotlib.widgets import Cursor
+    
+    # display on basemap
+    base_path="basemap/Idrija_14.tif"
+    fig, ax=dispGrid(grid,layer_name='Velocity',base_path=base_path)
+    
+    # wait for click
+    cursor = Cursor(ax, useblit=True, color='black', linewidth=1)
+    X=np.array(plt.ginput(1)).flatten() 
+    plt.plot(X[0],X[1],'r+')
+    plt.show()
 
-
-
+    
+    
+    # get pixel coordinates from lat lon
+    fig2, ax2 = plt.subplots()
+    col= int(np.round((X[0] - grid.get('info').get('geoTransform')[0])/grid.get('info').get('geoTransform')[1]))
+    row= int(np.round((X[1] - grid.get('info').get('geoTransform')[3])/grid.get('info').get('geoTransform')[5]))
+    
+    # get all values for all D_ maps
+    D=[grid.get(dateString)[row][col] for dateString in grid.get('AcquisitionTime').get('DateStrigns')]   
+     
+    # get times
+    grid.get('AcquisitionTime').get('JulianDays')
+    dates=grid.get('AcquisitionTime').get('DatesDateTimes');
+    
+    # plot
+    plt.plot_date(dates,D)
+    plt.show()
+    
+    plt.plot_date(dates,D,'r-o')
+    plt.ylabel('Deformation [mm]')
+    plt.title('Deformation History')
+    plt.grid(True)
+    plt.show()
+    
 
 
 
