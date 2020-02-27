@@ -144,7 +144,10 @@ def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=Non
         
         #"assign to final output"
         grid_out.update( {value: grid_z0} )
-    
+        
+    # apply    getAcquisitionTime 
+    grid_out=getAcquisitionTime(grid_out)
+
     return grid_out
     
 
