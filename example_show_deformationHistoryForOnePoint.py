@@ -17,5 +17,8 @@ df = read_file(filename)
 grid=shape2grid(dataFrame=df, values=None, gridSize=1/3600, LonMin=14.00,LonMax=14.06,LatMin=45.98,LatMax=46.04, method='linear')
 
 # show map, click point show def history
-showDeformationHistory(grid)
+base_path="basemap/Idrija_14.tif"
+
+# show map, click point show def history
+showDeformationHistory(grid,base_path)
 
