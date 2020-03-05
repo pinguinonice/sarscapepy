@@ -476,3 +476,18 @@ def s2grid(dataFrame,gridSize,LonMin=None,LonMax=None,LatMin=None,LatMax=None,me
     xi = _ndim_coords_from_arrays(tuple(grid), ndim=points.shape[1])
     dists, indexes = tree.query(xi)
     mask=dists > gridSize
+    
+    for i in  range(2,len(dataFrame.columns)):
+        value=dataFrame.iloc[:,i]
+        grid_z0 = griddata(points, value, tuple(grid), 'linear')
+        #  mask missing values with NaNs
+        grid_z0[mask] = np.nan
+        shape.iloc[:,i]=grid_z0.flatten()
+       
+    print("Finished!")
+    
+    shape=shape.dropna()
+    shape.crs=dataFrame.crs
+    shape=dt2gd(shape)
+    shape.index=pandas.RangeIndex(len(shape.index))
+    return shape
