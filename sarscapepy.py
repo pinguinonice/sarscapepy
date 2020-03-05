@@ -438,3 +438,41 @@ def sbas_dformat(dataFrame):
     result.crs=dataFrame.crs
     result=dt2gd(result)
     return result
+#Griding all data and save them in single shape file
+def s2grid(dataFrame,gridSize,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
+    from scipy.interpolate import griddata
+    import numpy as np
+    print("executing shape2grid:")
+    #"Check for None inputs and Values"
+    #PS: If max and min are choosen like this they might not fit together
+    if LonMin==None:
+       LonMin=min(dataFrame.X)
+    if LonMax==None:
+       LonMax=max(dataFrame.X)  
+    if LatMin==None:
+       LatMin=min(dataFrame.Y)
+    if LatMax==None:
+     LatMax=max(dataFrame.Y)   
+
+
+    dataFrame=dropl(dataFrame)       
+    x=np.arange(LonMin, LonMax, gridSize)
+    y=np.arange(LatMin, LatMax, gridSize)
+    grid = tuple(np.meshgrid(x,y))
+    ind=grid[0].flatten().size
+    shape=pandas.DataFrame(columns=dataFrame.columns,index=range(0,ind))
+    shape.crs=dataFrame.crs
+    shape.X=grid[0].flatten()
+    shape.Y=grid[1].flatten()
+    # create grid for Interpolation
+    grid = tuple(np.meshgrid(x,y))
+    # points as array
+    points=np.vstack((np.array(dataFrame.X),np.array(dataFrame.Y))).T
+    #Create mask to mask out to far interpolation results
+    # Construct kd-tree, functionality copied from scipy.interpolate
+    from scipy.interpolate.interpnd import _ndim_coords_from_arrays
+    from scipy.spatial import cKDTree
+    tree = cKDTree(points)
+    xi = _ndim_coords_from_arrays(tuple(grid), ndim=points.shape[1])
+    dists, indexes = tree.query(xi)
+    mask=dists > gridSize
