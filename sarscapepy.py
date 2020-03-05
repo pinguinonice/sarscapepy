@@ -406,7 +406,7 @@ def showDeformationHistory(grid):
     plt.grid(True)
     plt.show()
     
-#Function to convert Data Frame to GeoDataFrame,It is really handy!
+#Function to convert Data Frame to GeoDataFrame,It is really handy! @Mohseniaref 2020.3.5 
 def dt2gd(dataFrame):
     import pandas as pd
     import geopandas
@@ -416,4 +416,13 @@ def dt2gd(dataFrame):
  #  gdf.plot(color='red')
  #   plt.show()
     return gdf
+#Function to create standard PS geodataframe from original PS data from SARSCAPE,same done with SBAS  
+def ps_dformat(dataFrame):
+    import pandas as pd
+    import geopandas
+    f1=dataFrame[['X','Y','Velocity','LOS_In','LOS_Az']]
+    f2=dataFrame.iloc[:,18:]
+    result =pd.concat([f1, f2], axis=1)
+    result.crs=dataFrame.crs
+    return result
 
