@@ -425,4 +425,16 @@ def ps_dformat(dataFrame):
     result =pd.concat([f1, f2], axis=1)
     result.crs=dataFrame.crs
     return result
+#Function to create standard SBAS geodataframe from original SBAS data from SARSCAPE
 
+def sbas_dformat(dataFrame):
+    import pandas as pd
+    import geopandas
+    dfv=dataFrame[['xpos','ypos','velocity','ILOS','ALOS']].copy()
+    f1=dfv.rename(columns={'xpos':'X','ypos':'Y','velocity':'Velocity','ILOS':'LOS_In','ALOS':'LOS_Az'})
+    f2=dataFrame.iloc[:,:-9]
+    f2=f2.iloc[:,10:]
+    result =pd.concat([f1, f2], axis=1)
+    result.crs=dataFrame.crs
+    result=dt2gd(result)
+    return result
