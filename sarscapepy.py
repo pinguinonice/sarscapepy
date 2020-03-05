@@ -406,6 +406,14 @@ def showDeformationHistory(grid):
     plt.grid(True)
     plt.show()
     
-
-
+#Function to convert Data Frame to GeoDataFrame,It is really handy!
+def dt2gd(dataFrame):
+    import pandas as pd
+    import geopandas
+    import matplotlib.pyplot as plt
+    gdf = geopandas.GeoDataFrame(dataFrame, geometry=geopandas.points_from_xy(dataFrame.X, dataFrame.Y))
+    gdf.crs=dataFrame.crs
+ #  gdf.plot(color='red')
+ #   plt.show()
+    return gdf
 
