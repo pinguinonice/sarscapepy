@@ -24,7 +24,7 @@ fileps1= '/mnt/simorgh/Project_01/Idrija/PS_S22D/PSI_PS_processing/geocoding/PSI
 fileps2='/mnt/simorgh/Project_01/Idrija/PS_S44A/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
 filesbas1='/mnt/simorgh/Project_01/Idrija/SB_S22D/SBAS_SBAS_processing/inversion/vector/SI_v50d0_h50d0_c0d6_0.shp'
 filesbas2='/mnt/simorgh/Project_01/Idrija/SB_S44A_II/SBAS_SBAS_processing/inversion/vector/SI_v50d0_h50d0_c0d6_0.shp'
-filesbas='/mnt/simorgh/Project_01/Idrija/merge-test/SI_v50d0_h50d0_c0d6_0.shp'
+
 ############################################################################################
 #Reading file
 sb1=read_file(filesbas1)
