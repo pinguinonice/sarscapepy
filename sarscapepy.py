@@ -415,7 +415,7 @@ def showDeformationHistory(grid,base_path):
     plt.title('Deformation History')
     plt.grid(True)
     plt.show()
-
+	
     # in case of interpolated data
     # check if original existst 
     if "orgAcquisitionTime" in grid:
@@ -439,7 +439,30 @@ def showDeformationHistory(grid,base_path):
         plt.ylabel('Deformation [mm]')
         plt.title('Original Deformation History')
         plt.grid(True)
-        plt.show()    
+        plt.show()  
+
+    
+#Function to convert Data Frame to GeoDataFrame,It is really handy! @Mohseniaref 2020.3.5 
+def dt2gd(dataFrame):
+    import pandas as pd
+    import geopandas
+    import matplotlib.pyplot as plt
+    gdf = geopandas.GeoDataFrame(dataFrame, geometry=geopandas.points_from_xy(dataFrame.X, dataFrame.Y))
+    gdf.crs=dataFrame.crs
+ #  gdf.plot(color='red')
+ #   plt.show()
+    return gdf
+#Function to create standard PS geodataframe from original PS data from SARSCAPE,same done with SBAS  
+def ps_dformat(dataFrame):
+    import pandas as pd
+    import geopandas
+    f1=dataFrame[['X','Y','Velocity','LOS_In','LOS_Az']]
+    f2=dataFrame.iloc[:,18:]
+    result =pd.concat([f1, f2], axis=1)
+    result.crs=dataFrame.crs
+    return result
+ 
+  
         
 """
 interpolateTemporal description:
@@ -539,8 +562,72 @@ def interpolateTemporal(grid,  timeStart ,  timeEnd ,  timeStepDays , kind ='lin
     #create new AcquisitionTime
     grid=getAcquisitionTime(grid)
     
-    
-
         
     return grid    
 
+#Function to create standard SBAS geodataframe from original SBAS data from SARSCAPE
+
+def sbas_dformat(dataFrame):
+    import pandas as pd
+    import geopandas
+    dfv=dataFrame[['xpos','ypos','velocity','ILOS','ALOS']].copy()
+    f1=dfv.rename(columns={'xpos':'X','ypos':'Y','velocity':'Velocity','ILOS':'LOS_In','ALOS':'LOS_Az'})
+    f2=dataFrame.iloc[:,:-9]
+    f2=f2.iloc[:,10:]
+    result =pd.concat([f1, f2], axis=1)
+    result.crs=dataFrame.crs
+    result=dt2gd(result)
+    return result
+	
+	
+#Griding all data and save them in single shape file
+def s2grid(dataFrame,gridSize,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
+    from scipy.interpolate import griddata
+    import numpy as np
+    print("executing shape2grid:")
+    #"Check for None inputs and Values"
+    #PS: If max and min are choosen like this they might not fit together
+    if LonMin==None:
+       LonMin=min(dataFrame.X)
+    if LonMax==None:
+       LonMax=max(dataFrame.X)  
+    if LatMin==None:
+       LatMin=min(dataFrame.Y)
+    if LatMax==None:
+     LatMax=max(dataFrame.Y)  
+    dataFrame=dropl(dataFrame)       
+    x=np.arange(LonMin, LonMax, gridSize)
+    y=np.arange(LatMin, LatMax, gridSize)
+    grid = tuple(np.meshgrid(x,y))
+    ind=grid[0].flatten().size
+    shape=pandas.DataFrame(columns=dataFrame.columns,index=range(0,ind))
+    shape.crs=dataFrame.crs
+    shape.X=grid[0].flatten()
+    shape.Y=grid[1].flatten()
+    # create grid for Interpolation
+    grid = tuple(np.meshgrid(x,y))
+    # points as array
+    points=np.vstack((np.array(dataFrame.X),np.array(dataFrame.Y))).T
+    #Create mask to mask out to far interpolation results
+    # Construct kd-tree, functionality copied from scipy.interpolate
+    from scipy.interpolate.interpnd import _ndim_coords_from_arrays
+    from scipy.spatial import cKDTree
+    tree = cKDTree(points)
+    xi = _ndim_coords_from_arrays(tuple(grid), ndim=points.shape[1])
+    dists, indexes = tree.query(xi)
+    mask=dists > gridSize
+    
+    for i in  range(2,len(dataFrame.columns)):
+        value=dataFrame.iloc[:,i]
+        grid_z0 = griddata(points, value, tuple(grid), 'linear')
+        #  mask missing values with NaNs
+        grid_z0[mask] = np.nan
+        shape.iloc[:,i]=grid_z0.flatten()
+       
+    print("Finished!")
+    
+    shape=shape.dropna()
+    shape.crs=dataFrame.crs
+    shape=dt2gd(shape)
+    shape.index=pandas.RangeIndex(len(shape.index))
+    return shape
