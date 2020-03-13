@@ -33,7 +33,7 @@ grid_asc, grid_dsc=decomposeTwoOrbits(grid_asc, grid_dsc, layer_name='Velocity')
 # display on basemap
 base_path="basemap/Idrija_14.tif"
 
-dispGrid(grid_asc,layer_name='Velocity',base_path=base_path)
-dispGrid(grid_dsc,layer_name='Velocity',base_path=base_path)
-dispGrid(grid_asc,layer_name='Velocity_vert',base_path=base_path)
-dispGrid(grid_asc,layer_name='Velocity_east',base_path=base_path)
+dispGrid(grid_asc,layer_name='Velocity',base_path=base_path,fig=None, ax=None,clim=(-20,20))
+dispGrid(grid_dsc,layer_name='Velocity',base_path=base_path,fig=None, ax=None,clim=(-20,20))
+dispGrid(grid_asc,layer_name='Velocity_vert',base_path=base_path,fig=None, ax=None,clim=(-20,20))
+dispGrid(grid_asc,layer_name='Velocity_east',base_path=base_path,fig=None, ax=None,clim=(-20,20))

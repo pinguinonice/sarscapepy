@@ -20,5 +20,5 @@ grid=shape2grid(dataFrame=df, values=None, gridSize=1/3600, LonMin=14.00,LonMax=
 base_path="basemap/Idrija_14.tif"
 
 # show map, click point show def history
-showDeformationHistory(grid,base_path)
+showDeformationHistory(grid,base_path=None)
 

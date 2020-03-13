@@ -163,7 +163,7 @@ Parameters:
     
 # display on basemap
     
-def dispGrid(grid,layer_name=None,base_path=None):
+def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40)):
     
 
     import numpy as np
@@ -177,28 +177,39 @@ def dispGrid(grid,layer_name=None,base_path=None):
     
     
     
-    # plot
-    fig, ax = plt.subplots()
-    t = plt.title(layer_name)
+    # new plot if no plot is provided plot
+    if fig==None or ax==None:
+        fig, ax = plt.subplots()
+        newplot=True
+        
+        
+    ax.set_title(layer_name)
     # if basemap path is set
     if type(base_path) == str:
         # load basemap
         base = georaster.MultiBandRaster(base_path)
-        plt.imshow(np.array(base.r[:,:,:], dtype='uint8')  , alpha=1,extent=base.extent)
+        ax.imshow(np.array(base.r[:,:,:], dtype='uint8')  , alpha=1,extent=base.extent)
     
-    plot_grid=plt.imshow(np.array(layer.r)  , alpha=0.6, cmap='RdBu',extent=layer.extent)
+    plot_grid=ax.imshow(np.array(layer.r)  , alpha=0.6, cmap='RdBu',extent=layer.extent)
     
-    # set coloraxis
-    plt.clim(-20,20) 
-    cbar = fig.colorbar(plot_grid)
-    
+
+    #check if there is more than one axes
+    plot_grid.set_clim(clim[0],clim[1])  
+
+    if len(plt.gcf().axes) < 2:
+        cbar = fig.colorbar(plot_grid)
+
+
     # label axis
     plt.xlabel('Lon')
     plt.ylabel('Lat')
     
     # flip Lat axis
-    plt.ylim(plt.ylim()[::-1])
+    if plt.ylim()[0]>plt.ylim()[1]:
+        plt.ylim(plt.ylim()[::-1])
+    
     plt.show()
+    #fig.canvas.manager.window.raise_()
     return fig, ax
            
 """
@@ -373,7 +384,7 @@ def showDeformationHistory(grid,base_path):
     
     # display on basemap
     
-    fig, ax=dispGrid(grid,layer_name='Velocity',base_path=base_path)
+    fig, ax=dispGrid(grid,layer_name='Velocity',base_path=base_path,fig=None, ax=None,clim=(-20,20))
     
     # wait for click
     cursor = Cursor(ax, useblit=True, color='black', linewidth=1)
