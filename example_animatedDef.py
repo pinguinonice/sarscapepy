@@ -9,7 +9,7 @@ from sarscapepy import shape2grid, dispGrid, read_file,interpolateTemporal,anima
 
 # read file
 #filename= input('Enter Shape file name please : ')
-filename= 'D:/Philipp/5-Projects/STINGS/Idrija/Project 2020/Idrija/PS_S44A/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
+filename= 'D:/Philipp/5-Projects/STINGS/Idrija/Idrija II/PS_S22D_II\PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
 
 df = read_file(filename)
 
@@ -26,8 +26,8 @@ grid =interpolateTemporal(grid, timeStart, timeEnd, timeStepDays, kind =kind)
 
 
 base_path="basemap/Idrija_14.tif"
-out_path="output/animation.gif"
-clim=(-50,50)
+out_path="output/animation2.gif"
+clim=(-30,30)
 
 animateGrid(grid,clim,out_path,base_path=base_path)
 

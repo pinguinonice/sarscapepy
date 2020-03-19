@@ -648,7 +648,7 @@ animateGrid description:
         
     edit: 17.3.2020 Philipp Schneider, ifp
 """ 
-def animateGrid(grid,clim,out_path,base_path=None):
+def animateGrid(grid,clim,out_path,base_path=None,suffix=''):
     import numpy as np
     import georaster
     import matplotlib.pyplot as plt
@@ -656,7 +656,7 @@ def animateGrid(grid,clim,out_path,base_path=None):
     import matplotlib.animation as animation
     from matplotlib.animation import PillowWriter
     
-    DateStrigns=[key for key in grid.keys() if 'D_' in key[0:2]]
+    DateStrigns=[key for key in grid.keys() if ('D_' in key) and (suffix in key) and ('org' not in key)]
         
     # new plot 
     fig, ax = plt.subplots()
