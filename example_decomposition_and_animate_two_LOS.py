@@ -10,10 +10,13 @@ from sarscapepy import shape2grid, read_file,interpolateTemporal,animateGrid,dec
 
 # read file
 #path_asc= input('Enter Shape file name please : ')
-path_asc= 'D:/Philipp/5-Projects/STINGS/Idrija/Project 2020/Idrija/PS_S44A/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
-path_dsc= 'D:/Philipp/5-Projects/STINGS/Idrija/Project 2020/Idrija/PS_S22D/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
+# PSI
+path_asc= 'D:/Philipp/5-Projects/STINGS/Idrija/Idrija II/PS_S44A_II/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
+path_dsc= 'D:/Philipp/5-Projects/STINGS/Idrija/Idrija II/PS_S22D_II/PSI_PS_processing/geocoding/PSI_PS_60_0.shp'
 
-#path_asc='D:/Philipp/5-Projects/STINGS/Idrija/Project 2020/Idrija/PS_S22D/PSI_PS_processing/geocoding/PSI_PS_60_0_VD.shp'
+# # SBAS
+# path_asc= r'D:\Philipp\5-Projects\STINGS\Idrija\Idrija II\SB_S44A_III\SBAS_SBAS_processing\inversion\vector\SI_v50d0_h50d0_c0d6_VD_0.shp'
+# path_dsc= r'D:\Philipp\5-Projects\STINGS\Idrija\Idrija II\SB_S22D_II\SBAS_SBAS_processing\inversion\vector\SI_v50d0_h50d0_c0d6_VD_0.shp'
 
 #read header and drop last coloumn!
 asc=read_file(path_asc)

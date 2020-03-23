@@ -72,7 +72,19 @@ Output:
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
     from scipy.interpolate import griddata
     import numpy as np
+    import utm
     print("executing shape2grid:")
+    # check if Lat and lon field exist
+    
+    try:
+        dataFrame.Lon
+    except AttributeError:
+        print('No Lat,Lon field, assuming UTM33T')
+    
+        lat,lon=utm.to_latlon(dataFrame.xpos,dataFrame.ypos, 33, 'T')
+        dataFrame['Lat']=lat
+        dataFrame['Lon']=lon
+    
 
     #"Check for None inputs and Values"
     #PS: If max and min are choosen like this they might not fit together
@@ -246,12 +258,19 @@ def decomposeTwoOrbits(grid_asc, grid_dsc, layer_name):
     layer_east=np.full_like(layer_asc,np.nan)
     layer_vert=np.full_like(layer_asc,np.nan)
 
-    
-    AZ_asc=grid_asc.get('LOS_Az').flatten()/180*np.pi
-    IN_asc=grid_asc.get('LOS_In').flatten()/180*np.pi
-    AZ_dsc=grid_dsc.get('LOS_Az').flatten()/180*np.pi
-    IN_dsc=grid_dsc.get('LOS_In').flatten()/180*np.pi   
-    
+    try:
+        AZ_asc=grid_asc.get('LOS_Az').flatten()/180*np.pi
+        IN_asc=grid_asc.get('LOS_In').flatten()/180*np.pi
+        AZ_dsc=grid_dsc.get('LOS_Az').flatten()/180*np.pi
+        IN_dsc=grid_dsc.get('LOS_In').flatten()/180*np.pi 
+    except:    
+        AZ_asc=grid_asc.get('ALOS').flatten()/180*np.pi
+        IN_asc=grid_asc.get('ILOS').flatten()/180*np.pi
+        AZ_dsc=grid_dsc.get('ALOS').flatten()/180*np.pi
+        IN_dsc=grid_dsc.get('ILOS').flatten()/180*np.pi 
+        
+        
+        
         #for each pixel   
     for i in range(0, len(AZ_asc)-1):   
         # check for nan
