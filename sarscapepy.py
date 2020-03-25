@@ -55,21 +55,22 @@ def point2grd(data,output_filename):
 
 
 
-"""
-shape2grid description:
-Parameters:    
-    dataFrame: geopandas dataframe
-    gridSize : float grid size of the output grid
-    values   : list of strings with the desired output fields 
-    LonMin,LonMax: X bounderies
-    LatMin,LatMax: Y bounderies
-    method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
-Output:
-    dictionary with NumPy array of the interpolated values + mask    
-"""
+
 
 
 def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=None,LatMax=None,method='linear'):
+    """
+    shape2grid description:
+    Parameters:    
+        dataFrame: geopandas dataframe
+        gridSize : float grid size of the output grid
+        values   : list of strings with the desired output fields 
+        LonMin,LonMax: X bounderies
+        LatMin,LatMax: Y bounderies
+        method  : interpolation methode for griddata() {‘linear’, ‘nearest’, ‘cubic’}
+    Output:
+        dictionary with NumPy array of the interpolated values + mask    
+    """
     from scipy.interpolate import griddata
     import numpy as np
     import utm
@@ -164,19 +165,19 @@ def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=Non
     
 
 
-"""
-dispGrid description:
-Parameters:    
-    grid: output dict from shape2grid
-    layer_name : string with Layer name in grid
-    base_path   : path to basemap (geotif lat,lon, i.e. SAS output) 
-  
-"""
+
     
 # display on basemap
     
 def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40)):
-    
+    """
+    dispGrid description:
+    Parameters:    
+        grid: output dict from shape2grid
+        layer_name : string with Layer name in grid
+        base_path   : path to basemap (geotif lat,lon, i.e. SAS output) 
+      
+    """
 
     import numpy as np
     import georaster
@@ -224,20 +225,21 @@ def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40)
     #fig.canvas.manager.window.raise_()
     return fig, ax
            
-"""
-decomposeTwoOrbits description:
-    following:  https://www.sciencedirect.com/science/article/pii/S0377027305003070?via%3Dihub
-Parameters: 
-    input:
-    grid_asc: orbit1 (output dict from shape2grid)
-    grid_dsc: orbit2 (output dict from shape2grid)
-
-    output
-    grid_vert: vertical grid (up down) horizonata
-    grid_horz: horizontal grid (east west)
-"""    
+    
   
 def decomposeTwoOrbits(grid_asc, grid_dsc, layer_name):
+    """
+    decomposeTwoOrbits description:
+        following:  https://www.sciencedirect.com/science/article/pii/S0377027305003070?via%3Dihub
+    Parameters: 
+        input:
+        grid_asc: orbit1 (output dict from shape2grid)
+        grid_dsc: orbit2 (output dict from shape2grid)
+    
+        output
+        grid_vert: vertical grid (up down) horizonata
+        grid_horz: horizontal grid (east west)
+    """
     import numpy as np
     
     # check input
@@ -320,22 +322,23 @@ def decomposeTwoOrbits(grid_asc, grid_dsc, layer_name):
     
     return grid_asc, grid_dsc
 
-"""
-getAcquisitionTime description:
    
-Parameters: 
-    :
-    grid: orbit (output dict from shape2grid)
-    
-
-    output
-    grid: with dict field AcquisitionTime
-    AcquisitionTime:  DateStrigns, JulianDays, DatesDateTimes
-    
-    edit: 27.2.2020 Philipp Schneider ifp
-"""    
   
 def getAcquisitionTime(grid):
+    """
+    getAcquisitionTime description:
+       
+    Parameters: 
+        :
+        grid: orbit (output dict from shape2grid)
+        
+    
+        output
+        grid: with dict field AcquisitionTime
+        AcquisitionTime:  DateStrigns, JulianDays, DatesDateTimes
+        
+        edit: 27.2.2020 Philipp Schneider ifp
+    """ 
     from datetime import datetime
     from  jdcal import gcal2jd
     # get all D_*values
@@ -355,22 +358,23 @@ def getAcquisitionTime(grid):
     
     return grid
     
-"""
-plotAcquisitionTimeline description:
-   
-Parameters: 
- input:
-    grid: orbit (output dict from shape2grid)
-            WITH AcquisitionTime from  getAcquisitionTime
-    ylabel: i.e name of the orbit
-    title : i.e. place
-    
-    
-    edit: 27.2.2020 Philipp Schneider, ifp
-"""     
+     
 
 
 def plotAcquisitionTimeline(grid,title='AcquisitionTime',ylabel='Data'):
+    """
+    plotAcquisitionTimeline description:
+       
+    Parameters: 
+     input:
+        grid: orbit (output dict from shape2grid)
+                WITH AcquisitionTime from  getAcquisitionTime
+        ylabel: i.e name of the orbit
+        title : i.e. place
+        
+        
+        edit: 27.2.2020 Philipp Schneider, ifp
+    """
     import matplotlib.pyplot as plt
     import numpy as np
     
@@ -384,19 +388,20 @@ def plotAcquisitionTimeline(grid,title='AcquisitionTime',ylabel='Data'):
     plt.grid(True)
     plt.show()
 
-"""
-showDeformationHistory description:
-   draws def history
-Parameters: 
- input:
-    grid: orbit (output dict from shape2grid)
-            WITH AcquisitionTime from  getAcquisitionTime
-   
-    
-    
-    edit: 27.2.2020 Philipp Schneider, ifp
-""" 
+ 
 def showDeformationHistory(grid,base_path):
+    """
+    showDeformationHistory description:
+       draws def history
+    Parameters: 
+     input:
+        grid: orbit (output dict from shape2grid)
+                WITH AcquisitionTime from  getAcquisitionTime
+       
+        
+        
+        edit: 27.2.2020 Philipp Schneider, ifp
+    """
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib.widgets import Cursor
@@ -483,25 +488,26 @@ def ps_dformat(dataFrame):
  
   
         
-"""
-interpolateTemporal description:
-   interpolate temporal
-   Parameters: 
- input:
-    grid: orbit (output dict from shape2grid)
-            WITH AcquisitionTime from  getAcquisitionTime
-   timeEnd: string i.e. 20200228 (if not in Acquisition intervall will set on last days)
-   timeStart :  string i.e. 19910119 (if not in Acquisition intervall will set on first days)
-   timeStepDays: int steps in days i.e. 12 
-   kind   : string ‘linear’, ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, ‘next’
-   
-output: grid with original values orgD_*
-                and new values D_*
-        
-    edit: 28.2.2020 Philipp Schneider, ifp
-"""     
+    
 
 def interpolateTemporal(grid,  timeStart ,  timeEnd ,  timeStepDays , kind ='linear'):
+    """
+    interpolateTemporal description:
+       interpolate temporal
+       Parameters: 
+     input:
+        grid: orbit (output dict from shape2grid)
+                WITH AcquisitionTime from  getAcquisitionTime
+       timeEnd: string i.e. 20200228 (if not in Acquisition intervall will set on last days)
+       timeStart :  string i.e. 19910119 (if not in Acquisition intervall will set on first days)
+       timeStepDays: int steps in days i.e. 12 
+       kind   : string ‘linear’, ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, ‘next’
+       
+    output: grid with original values orgD_*
+                    and new values D_*
+            
+        edit: 28.2.2020 Philipp Schneider, ifp
+    """ 
     from datetime import datetime
     from  jdcal import gcal2jd,jd2gcal
     from scipy import interpolate
@@ -652,22 +658,23 @@ def s2grid(dataFrame,gridSize,LonMin=None,LonMax=None,LatMin=None,LatMax=None,me
     return shape
 
 
-"""
-animateGrid description:
-   animateGrid (all D_XXXXXX) 
-   Parameters: 
- input:
-    grid: orbit (output dict from shape2grid)
-            WITH AcquisitionTime from  getAcquisitionTime
-    clim: min an max of colorbar. tuple like clim=(-50,50)
-    output_path: path to the gif. i.e. output/animation.gif
-    base_path: path to basemap
-   
- output: will save a gif as defined in out_path
-        
-    edit: 17.3.2020 Philipp Schneider, ifp
-""" 
+ 
 def animateGrid(grid,clim,out_path,base_path=None,suffix=''):
+    """
+    animateGrid description:
+       animateGrid (all D_XXXXXX) 
+       Parameters: 
+     input:
+        grid: orbit (output dict from shape2grid)
+                WITH AcquisitionTime from  getAcquisitionTime
+        clim: min an max of colorbar. tuple like clim=(-50,50)
+        output_path: path to the gif. i.e. output/animation.gif
+        base_path: path to basemap
+       
+     output: will save a gif as defined in out_path
+            
+        edit: 17.3.2020 Philipp Schneider, ifp
+    """
     import numpy as np
     import georaster
     import matplotlib.pyplot as plt
