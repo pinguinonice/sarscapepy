@@ -48,16 +48,16 @@ for DateStrign in DateStrigns:
 
 # animate and save vertical
 base_path="basemap/Idrija_14.tif"
-out_path="output/animation_vert.gif"
-clim=(-30,30)
+out_path="output/animation_vertPSI.gif"
+clim=(-50,50)
 
 animateGrid(grid_asc,clim,out_path,base_path=base_path,suffix='_vert')
 
 
 # animate and save horizontal
 base_path="basemap/Idrija_14.tif"
-out_path="output/animation_east.gif"
-clim=(-30,30)
+out_path="output/animation_eastPSI.gif"
+clim=(-50,50)
 
 animateGrid(grid_asc,clim,out_path,base_path=base_path,suffix='_east')
 
