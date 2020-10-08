@@ -169,7 +169,7 @@ def shape2grid(dataFrame,gridSize,values=None,LonMin=None,LonMax=None,LatMin=Non
     
 # display on basemap
     
-def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40)):
+def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40),savePath=None):
     """
     dispGrid description:
     Parameters:    
@@ -223,6 +223,17 @@ def dispGrid(grid,layer_name=None,base_path=None,fig=None, ax=None,clim=(-40,40)
     
     plt.show()
     #fig.canvas.manager.window.raise_()
+    
+    if savePath==None:
+        print('Not saving the Plot')
+    else:
+        print('Save Plot as: '+ savePath)
+
+        plt.savefig(savePath,dpi=400,pad_inches=0)
+        
+        
+    
+    
     return fig, ax
            
     
