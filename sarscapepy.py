@@ -400,7 +400,7 @@ def plotAcquisitionTimeline(grid,title='AcquisitionTime',ylabel='Data'):
     plt.show()
 
  
-def showDeformationHistory(grid,base_path):
+def showDeformationHistory(grid,base_path,X=None):
     """
     showDeformationHistory description:
        draws def history
@@ -418,15 +418,19 @@ def showDeformationHistory(grid,base_path):
     from matplotlib.widgets import Cursor
     
     # display on basemap
-    
-    fig, ax=dispGrid(grid,layer_name='Velocity',base_path=base_path,fig=None, ax=None,clim=(-20,20))
+
+    fig, ax=dispGrid(grid,layer_name='velocity',base_path=base_path,fig=None, ax=None,clim=(-20,20))
     
     # wait for click
     cursor = Cursor(ax, useblit=True, color='black', linewidth=1)
-    X=np.array(plt.ginput(1)).flatten() 
+    if X==None:        
+            X=np.array(plt.ginput(1)).flatten() 
+    else:
+        X=np.array(X)            
     plt.plot(X[0],X[1],'r+')
     plt.show()
 
+        
     
     
     # get pixel coordinates from lat lon
@@ -464,7 +468,7 @@ def showDeformationHistory(grid,base_path):
          
         # get times
         grid.get('orgAcquisitionTime').get('JulianDays')
-        dates=grid.get('orgAcquisitionTime').get('DatesDateTimes');
+        dates=grid.get('orgAcquisitionTime').get('DatesDateTimes')
         
         # plot
         plt.plot_date(dates,D)
